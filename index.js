@@ -27,16 +27,16 @@ const isValidIP = (ip) => {
 
 app.get('/ipinfo', (req, res) => {
   try {
-    const ip = req.clientIp || req.ip
+    const ip = req.clientIp || req.ip;
     
     if (!ip || !isValidIP(ip)) {
-      return res.status(400).json({ error: 'Invalid IP address' })
+      return res.status(400).json({ error: 'Invalid IP address' });
     }
 
-    const geo = geoip.lookup(ip)
+    const geo = geoip.lookup(ip);
     
     if (!geo) {
-      return res.status(404).json({ error: 'Location information not found' })
+      return res.status(404).json({ error: 'Location information not found' });
     }
 
     res.json({
@@ -44,10 +44,20 @@ app.get('/ipinfo', (req, res) => {
       city: geo.city || 'Unknown',
       region: geo.region || 'Unknown',
       country: geo.country || 'Unknown',
+      continent: geo.continent || 'Unknown',
       loc: geo.ll || [],
       timezone: geo.timezone || 'Unknown',
+      metro: geo.metro || 'Unknown',
+      area: geo.area || 0,
+      eu: geo.eu === '1' ? 'Yes' : 'No',
+      network: {
+        type: ip.includes(':') ? 'IPv6' : 'IPv4',
+        range: geo.range || [],
+        proxy: req.headers['x-forwarded-for'] ? true : false,
+        userAgent: req.headers['user-agent'] || 'Unknown'
+      },
       timestamp: new Date().toISOString()
-    })
+    });
   } catch (error) {
     console.error('Error processing request:', error)
     res.status(500).json({ error: 'Internal server error' })

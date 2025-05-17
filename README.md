@@ -40,10 +40,7 @@ PORT=3000
 fetch('http://localhost:3000/ipinfo')
   .then(response => response.json())
   .then(data => {
-    console.log('Your IP:', data.ip);
-    console.log('Location:', data.city, data.region, data.country);
-    console.log('Timezone:', data.timezone);
-    console.log('Coordinates:', data.loc);
+    console.log(data);
   })
   .catch(error => console.error('Error:', error));
 ```
@@ -56,8 +53,19 @@ fetch('http://localhost:3000/ipinfo')
   "city": "New York",
   "region": "NY",
   "country": "US",
+  "continent": "NA",
   "loc": [40.7128, -74.0060],
-  "timezone": "America/New_York"
+  "timezone": "America/New_York",
+  "metro": 501,
+  "area": 5,
+  "eu": "No",
+  "network": {
+    "type": "IPv4",
+    "range": ["192.168.1.0", "192.168.1.255"],
+    "proxy": false,
+    "userAgent": "Mozilla/5.0..."
+  },
+  "timestamp": "2023-11-15T12:00:00.000Z"
 }
 ```
 
