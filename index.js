@@ -3,6 +3,7 @@ const geoip = require('geoip-lite')
 const requestIp = require('request-ip')
 const cors = require('cors')
 const morgan = require('morgan')
+const ipapi = require('ipapi.co')
 require('dotenv').config()
 
 const app = express()
@@ -25,7 +26,7 @@ const isValidIP = (ip) => {
   return ipv4Regex.test(ip) || ipv6Regex.test(ip)
 }
 
-app.get('/ipinfo', (req, res) => {
+app.get('/ipinfo', async (req, res) => {
   try {
     const ip = req.clientIp || req.ip;
     
@@ -38,6 +39,13 @@ app.get('/ipinfo', (req, res) => {
     if (!geo) {
       return res.status(404).json({ error: 'Location information not found' });
     }
+
+    // Get additional ISP information
+    const ispInfo = await new Promise((resolve, reject) => {
+      ipapi.location((response) => {
+        resolve(response);
+      }, ip, '', 'json');
+    });
 
     res.json({
       ip: ip,
@@ -56,13 +64,19 @@ app.get('/ipinfo', (req, res) => {
         proxy: req.headers['x-forwarded-for'] ? true : false,
         userAgent: req.headers['user-agent'] || 'Unknown'
       },
+      isp: {
+        name: ispInfo.org || 'Unknown',
+        asn: ispInfo.asn || 'Unknown',
+        connection: ispInfo.connection_type || 'Unknown',
+        domain: ispInfo.network || 'Unknown'
+      },
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    console.error('Error processing request:', error)
-    res.status(500).json({ error: 'Internal server error' })
+    console.error('Error processing request:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-})
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
