@@ -17,7 +17,7 @@ A simple Node.js service to get detailed information about IP addresses, includi
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/ipinfo.git
+git clone https://github.com/prabhasha2006/ipinfo.git
 cd ipinfo
 ```
 
