@@ -3,7 +3,6 @@ const geoip = require('geoip-lite')
 const requestIp = require('request-ip')
 const cors = require('cors')
 const morgan = require('morgan')
-const ipapi = require('ipapi.co')
 require('dotenv').config()
 
 const app = express()
@@ -28,24 +27,17 @@ const isValidIP = (ip) => {
 
 app.get('/ipinfo', async (req, res) => {
   try {
-    const ip = req.clientIp || req.ip;
+    const ip = req.clientIp || req.ip
     
     if (!ip || !isValidIP(ip)) {
-      return res.status(400).json({ error: 'Invalid IP address' });
+      return res.status(400).json({ error: 'Invalid IP address' })
     }
 
-    const geo = geoip.lookup(ip);
+    const geo = geoip.lookup(ip)
     
     if (!geo) {
-      return res.status(404).json({ error: 'Location information not found' });
+      return res.status(404).json({ error: 'Location information not found' })
     }
-
-    // Get additional ISP information
-    const ispInfo = await new Promise((resolve, reject) => {
-      ipapi.location((response) => {
-        resolve(response);
-      }, ip, '', 'json');
-    });
 
     res.json({
       ip: ip,
@@ -64,19 +56,13 @@ app.get('/ipinfo', async (req, res) => {
         proxy: req.headers['x-forwarded-for'] ? true : false,
         userAgent: req.headers['user-agent'] || 'Unknown'
       },
-      isp: {
-        name: ispInfo.org || 'Unknown',
-        asn: ispInfo.asn || 'Unknown',
-        connection: ispInfo.connection_type || 'Unknown',
-        domain: ispInfo.network || 'Unknown'
-      },
       timestamp: new Date().toISOString()
-    });
+    })
   } catch (error) {
-    console.error('Error processing request:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error processing request:', error)
+    res.status(500).json({ error: 'Internal server error' })
   }
-});
+})
 
 // Error handling middleware
 app.use((err, req, res, next) => {

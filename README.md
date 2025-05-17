@@ -65,12 +65,6 @@ fetch('http://localhost:3000/ipinfo')
     "proxy": false,
     "userAgent": "Mozilla/5.0..."
   },
-  "isp": {
-    "name": "Comcast Cable Communications",
-    "asn": "AS7922",
-    "connection": "broadband",
-    "domain": "comcast.net"
-  },
   "timestamp": "2023-11-15T12:00:00.000Z"
 }
 ```
